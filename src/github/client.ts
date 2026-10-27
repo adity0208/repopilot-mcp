@@ -107,7 +107,7 @@ export class GitHubClient {
   async fetchOpenIssues(
     owner: string,
     repo: string,
-    options?: { perPage?: number },
+    options?: { perPage?: number; labels?: string },
   ): Promise<GitHubIssue[]> {
     const coords = validateOwnerRepo(owner, repo);
     const perPage = Math.min(Math.max(1, options?.perPage ?? 30), 100);
@@ -118,6 +118,9 @@ export class GitHubClient {
     url.searchParams.set("page", "1");
     url.searchParams.set("sort", "updated");
     url.searchParams.set("direction", "desc");
+    if (options?.labels) {
+      url.searchParams.set("labels", options.labels);
+    }
 
     const headers: Record<string, string> = {
       Accept: "application/vnd.github+json",
@@ -185,6 +188,35 @@ export class GitHubClient {
       updated_at: issue.updated_at,
       closed_at: issue.closed_at,
     }));
+  }
+
+  /**
+   * Fetches starter-labeled issues server-side. Makes one request per label,
+   * merges and dedupes by issue number, and falls back to recent open issues
+   * (no labels filter) only if both labeled queries return nothing.
+   */
+  async fetchStarterCandidates(
+    owner: string,
+    repo: string,
+    options?: { perPage?: number },
+  ): Promise<GitHubIssue[]> {
+    const perPage = options?.perPage ?? 50;
+
+    const [goodFirst, helpWanted] = await Promise.all([
+      this.fetchOpenIssues(owner, repo, { perPage, labels: "good first issue" }),
+      this.fetchOpenIssues(owner, repo, { perPage, labels: "help wanted" }),
+    ]);
+
+    const byNumber = new Map<number, GitHubIssue>();
+    for (const issue of [...goodFirst, ...helpWanted]) {
+      byNumber.set(issue.number, issue);
+    }
+
+    if (byNumber.size > 0) {
+      return [...byNumber.values()];
+    }
+
+    return this.fetchOpenIssues(owner, repo, { perPage });
   }
 
   private handleHttpError(response: Response, coords: RepoCoordinates): never {

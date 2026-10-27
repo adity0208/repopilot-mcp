@@ -175,3 +175,108 @@ describe("GitHubClient error mappings", () => {
     );
   });
 });
+
+const json = (body: unknown) =>
+  new Response(JSON.stringify(body), {
+    status: 200,
+    headers: { "content-type": "application/json" },
+  });
+
+const issue = (number: number, extra: Record<string, unknown> = {}) => ({
+  id: number,
+  number,
+  title: `Issue ${number}`,
+  body: "body",
+  html_url: `https://github.com/octocat/Hello-World/issues/${number}`,
+  state: "open",
+  labels: [],
+  assignee: null,
+  assignees: [],
+  comments: 0,
+  created_at: "2026-10-01T00:00:00Z",
+  updated_at: "2026-10-20T00:00:00Z",
+  closed_at: null,
+  ...extra,
+});
+
+const labelOf = (url: unknown) => new URL(String(url)).searchParams.get("labels");
+
+describe("GitHubClient starter candidate fetching", () => {
+  it("requests each starter label server-side", async () => {
+    const fetchFn = vi.fn().mockImplementation(async () => json([]));
+    const client = new GitHubClient({ token: "t", fetchFn });
+
+    await client.fetchStarterCandidates("octocat", "Hello-World");
+
+    const labels = fetchFn.mock.calls.map(([url]) => labelOf(url));
+    expect(labels).toContain("good first issue");
+    expect(labels).toContain("help wanted");
+  });
+
+  it("dedupes an issue that carries both labels", async () => {
+    const fetchFn = vi.fn().mockImplementation(async (url: string) => {
+      const labels = labelOf(url);
+      if (labels === "good first issue") return json([issue(1), issue(2)]);
+      if (labels === "help wanted") return json([issue(2), issue(3)]);
+      return json([]);
+    });
+    const client = new GitHubClient({ token: "t", fetchFn });
+
+    const result = await client.fetchStarterCandidates("octocat", "Hello-World");
+
+    expect(result.map((i) => i.number).sort()).toEqual([1, 2, 3]);
+  });
+
+  it("filters pull requests out of labeled results", async () => {
+    const fetchFn = vi.fn().mockImplementation(async (url: string) => {
+      if (labelOf(url) === "good first issue") {
+        return json([issue(1), issue(2, { pull_request: { url: "https://example.test/pr/2" } })]);
+      }
+      return json([]);
+    });
+    const client = new GitHubClient({ token: "t", fetchFn });
+
+    const result = await client.fetchStarterCandidates("octocat", "Hello-World");
+
+    expect(result.map((i) => i.number)).toEqual([1]);
+  });
+
+  it("does not call the fallback when labeled issues exist", async () => {
+    const fetchFn = vi.fn().mockImplementation(async (url: string) => {
+      return labelOf(url) === "good first issue" ? json([issue(1)]) : json([]);
+    });
+    const client = new GitHubClient({ token: "t", fetchFn });
+
+    await client.fetchStarterCandidates("octocat", "Hello-World");
+
+    expect(fetchFn).toHaveBeenCalledTimes(2);
+  });
+
+  it("calls the fallback without a labels param when both labeled queries are empty", async () => {
+    const fetchFn = vi.fn().mockImplementation(async () => json([]));
+    const client = new GitHubClient({ token: "t", fetchFn });
+
+    await client.fetchStarterCandidates("octocat", "Hello-World");
+
+    expect(fetchFn).toHaveBeenCalledTimes(3);
+    const thirdUrl = new URL(String(fetchFn.mock.calls[2]?.[0]));
+    expect(thirdUrl.searchParams.has("labels")).toBe(false);
+  });
+
+  it("propagates a rate-limit error from a labeled request", async () => {
+    const fetchFn = vi.fn().mockImplementation(async (url: string) => {
+      if (labelOf(url) === "help wanted") {
+        return new Response("{}", {
+          status: 403,
+          headers: { "x-ratelimit-remaining": "0", "x-ratelimit-reset": "1700000000" },
+        });
+      }
+      return json([issue(1)]);
+    });
+    const client = new GitHubClient({ token: "t", fetchFn });
+
+    await expect(client.fetchStarterCandidates("octocat", "Hello-World")).rejects.toThrow(
+      "rate limit exceeded",
+    );
+  });
+});
