@@ -1,0 +1,67 @@
+{
+  "name": "repopilot-mcp",
+  "version": "0.1.0",
+  "description": "Local stdio MCP server for discovering beginner-friendly GitHub issues with explainable heuristics",
+  "type": "module",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "bin": {
+    "repopilot-mcp": "./dist/cli.js"
+  },
+  "files": [
+    "dist",
+    "README.md",
+    "LICENSE"
+  ],
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    }
+  },
+  "engines": {
+    "node": ">=20.0.0"
+  },
+  "scripts": {
+    "build": "tsc -p tsconfig.build.json",
+    "typecheck": "tsc --noEmit -p tsconfig.json",
+    "lint": "eslint .",
+    "lint:fix": "eslint . --fix",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "test": "vitest run",
+    "test:watch": "vitest"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/adity0208/repopilot-mcp.git"
+  },
+  "keywords": [
+    "mcp",
+    "model-context-protocol",
+    "github",
+    "open-source",
+    "good-first-issue",
+    "developer-tools"
+  ],
+  "author": "Aditya (adity0208)",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/adity0208/repopilot-mcp/issues"
+  },
+  "homepage": "https://github.com/adity0208/repopilot-mcp#readme",
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.32.2",
+    "zod": "^4.6.7"
+  },
+  "devDependencies": {
+    "@eslint/js": "^10.0.1",
+    "@types/node": "^26.6.5",
+    "eslint": "^10.13.0",
+    "eslint-config-prettier": "^10.1.8",
+    "prettier": "^3.9.10",
+    "typescript": "^6.0.3",
+    "typescript-eslint": "^8.72.0",
+    "vitest": "^5.0.5"
+  }
+}
