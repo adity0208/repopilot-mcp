@@ -1,0 +1,196 @@
+[
+  {
+    "id": 1001,
+    "number": 1,
+    "title": "Add documentation for quickstart onboarding",
+    "body": "We need a clear and comprehensive quickstart section in the README. Currently, newcomers have to search multiple files to understand how to get the server running locally. Please add prerequisites, installation instructions, and an example run command.",
+    "html_url": "https://github.com/octocat/Hello-World/issues/1",
+    "state": "open",
+    "labels": [
+      {
+        "id": 201,
+        "name": "good first issue",
+        "description": "Good for newcomers",
+        "color": "7057ff"
+      },
+      {
+        "id": 202,
+        "name": "documentation",
+        "description": "Improvements or additions to documentation",
+        "color": "0075ca"
+      }
+    ],
+    "user": {
+      "login": "maintainer1"
+    },
+    "assignee": null,
+    "assignees": [],
+    "comments": 1,
+    "created_at": "2026-10-01T12:00:00Z",
+    "updated_at": "2026-10-20T15:30:00Z",
+    "closed_at": null
+  },
+  {
+    "id": 1002,
+    "number": 2,
+    "title": "Fix typo in contributing guide (PR)",
+    "body": "Fixed spelling of environment in CONTRIBUTING.md.",
+    "html_url": "https://github.com/octocat/Hello-World/pull/2",
+    "state": "open",
+    "labels": [
+      {
+        "id": 201,
+        "name": "good first issue",
+        "color": "7057ff"
+      }
+    ],
+    "user": {
+      "login": "contributor1"
+    },
+    "assignee": null,
+    "assignees": [],
+    "comments": 0,
+    "created_at": "2026-10-05T10:00:00Z",
+    "updated_at": "2026-10-22T08:00:00Z",
+    "closed_at": null,
+    "pull_request": {
+      "url": "https://api.github.com/repos/octocat/Hello-World/pulls/2",
+      "html_url": "https://github.com/octocat/Hello-World/pull/2"
+    }
+  },
+  {
+    "id": 1003,
+    "number": 3,
+    "title": "Refactor test helper utilities",
+    "body": "The test helpers could be modernized to use Node 20+ built-ins instead of external mocks. A detailed migration path is documented in our wiki.",
+    "html_url": "https://github.com/octocat/Hello-World/issues/3",
+    "state": "open",
+    "labels": [
+      {
+        "id": 203,
+        "name": "help wanted",
+        "description": "Extra attention is needed",
+        "color": "008672"
+      }
+    ],
+    "user": {
+      "login": "maintainer2"
+    },
+    "assignee": {
+      "login": "developerA"
+    },
+    "assignees": [
+      {
+        "login": "developerA"
+      }
+    ],
+    "comments": 2,
+    "created_at": "2026-09-15T09:00:00Z",
+    "updated_at": "2026-10-18T14:00:00Z",
+    "closed_at": null
+  },
+  {
+    "id": 1004,
+    "number": 4,
+    "title": "Minor styling glitch in banner",
+    "body": "Too short.",
+    "html_url": "https://github.com/octocat/Hello-World/issues/4",
+    "state": "open",
+    "labels": [
+      {
+        "id": 204,
+        "name": "ui",
+        "color": "d4c5f9"
+      }
+    ],
+    "user": {
+      "login": "user3"
+    },
+    "assignee": null,
+    "assignees": [],
+    "comments": 0,
+    "created_at": "2026-10-10T11:00:00Z",
+    "updated_at": "2026-10-25T16:00:00Z",
+    "closed_at": null
+  },
+  {
+    "id": 1005,
+    "number": 5,
+    "title": "Add beginner friendly CLI flags guide",
+    "body": "We should document the CLI flags in depth so that new developers can test various configurations without inspecting source code.",
+    "html_url": "https://github.com/octocat/Hello-World/issues/5",
+    "state": "open",
+    "labels": [
+      {
+        "id": 205,
+        "name": "beginner-friendly",
+        "color": "e99695"
+      }
+    ],
+    "user": {
+      "login": "maintainer1"
+    },
+    "assignee": null,
+    "assignees": [],
+    "comments": 0,
+    "created_at": "2026-01-01T00:00:00Z",
+    "updated_at": "2026-01-10T00:00:00Z",
+    "closed_at": null
+  },
+  {
+    "id": 1006,
+    "number": 6,
+    "title": "WIP: Support experimental protocol extension (PR)",
+    "body": "Draft implementation of protocol.",
+    "html_url": "https://github.com/octocat/Hello-World/pull/6",
+    "state": "open",
+    "labels": [],
+    "user": {
+      "login": "coredev"
+    },
+    "assignee": null,
+    "assignees": [],
+    "comments": 4,
+    "created_at": "2026-10-12T00:00:00Z",
+    "updated_at": "2026-10-14T00:00:00Z",
+    "closed_at": null,
+    "pull_request": {
+      "url": "https://api.github.com/repos/octocat/Hello-World/pulls/6"
+    }
+  },
+  {
+    "id": 1007,
+    "number": 7,
+    "title": "Complex database deadlock under high concurrency",
+    "body": "Under load of 10k req/s, sqlite transactions occasionally lock each other. Requires deep rewrite of connection pool locking mechanism.",
+    "html_url": "https://github.com/octocat/Hello-World/issues/7",
+    "state": "open",
+    "labels": [
+      {
+        "id": 206,
+        "name": "bug",
+        "color": "d73a4a"
+      },
+      {
+        "id": 207,
+        "name": "performance",
+        "color": "cfd3d7"
+      }
+    ],
+    "user": {
+      "login": "architect"
+    },
+    "assignee": {
+      "login": "architect"
+    },
+    "assignees": [
+      {
+        "login": "architect"
+      }
+    ],
+    "comments": 12,
+    "created_at": "2026-02-10T00:00:00Z",
+    "updated_at": "2026-03-01T00:00:00Z",
+    "closed_at": null
+  }
+]
