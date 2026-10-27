@@ -136,4 +136,43 @@ describe("find_starter_issues tool execution", () => {
     expect(errorResult.isError).toBe(true);
     expect(errorResult.content[0]?.text).toContain("not found or is private");
   });
+  it("uses server-side label queries and tags results as labeled", async () => {
+    const labeledIssue = {
+      id: 101,
+      number: 101,
+      title: "Fix typo in docs",
+      body: "A".repeat(150),
+      html_url: "https://github.com/octocat/Hello-World/issues/101",
+      state: "open",
+      labels: [{ id: 1, name: "good first issue", description: null, color: "7057ff" }],
+      assignee: null,
+      assignees: [],
+      comments: 0,
+      created_at: "2026-10-01T00:00:00Z",
+      updated_at: "2026-10-20T00:00:00Z",
+      closed_at: null,
+    };
+
+    const mockFetch = vi.fn().mockImplementation(async (url: string) => {
+      const labels = new URL(String(url)).searchParams.get("labels");
+      return new Response(JSON.stringify(labels === "good first issue" ? [labeledIssue] : []), {
+        status: 200,
+        headers: { "content-type": "application/json" },
+      });
+    });
+
+    const client = new GitHubClient({ fetchFn: mockFetch as unknown as typeof fetch });
+
+    const result = await handleFindStarterIssues({ repo: "octocat/Hello-World", limit: 5 }, client);
+
+    const sentLabels = mockFetch.mock.calls.map(([url]) =>
+      new URL(String(url)).searchParams.get("labels"),
+    );
+    expect(sentLabels).toContain("good first issue");
+    expect(sentLabels).toContain("help wanted");
+    expect(mockFetch).toHaveBeenCalledTimes(2);
+    expect(result.structuredContent.returnedCount).toBe(1);
+    expect(result.structuredContent.issues[0]?.number).toBe(101);
+    expect(result.structuredContent.issues[0]?.confidence).toBe("labeled");
+  });
 });
